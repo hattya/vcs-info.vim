@@ -1,0 +1,19 @@
+let s:assert = themis#helper('assert')
+call themis#helper('command').with(s:assert)
+
+let s:is_win = has('win32') || has('win64') || has('win95') || has('win16')
+
+function! RemoveAll(path) abort
+  if &shell =~? 'sh$'
+    silent call system('rm -rf ' . shellescape(a:path))
+  elseif s:is_win
+    let cmd = isdirectory(a:path) ? 'rmdir /S /Q' : 'del'
+    silent call system(cmd . ' "' . a:path . '"')
+  endif
+endfunction
+
+function! TempDir() abort
+  let path = substitute(tempname(), '\\', '/', 'g')
+  call mkdir(path, 'p')
+  return path
+endfunction

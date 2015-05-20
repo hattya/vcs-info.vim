@@ -1,0 +1,15 @@
+Describe #get()
+  Before all
+    let path = TempDir()
+    execute 'edit ' . path . '/a.txt'
+  End
+
+  After all
+    bwipe!
+    call RemoveAll(path)
+  End
+
+  It returns empty dict
+    Assert Equals(vcs_info#get(), {})
+  End
+End
