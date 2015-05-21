@@ -13,3 +13,52 @@ Describe #get()
     Assert Equals(vcs_info#get(), {})
   End
 End
+
+Describe #abbr()
+  Before each
+    let hash = SHA1()
+    unlet! b:vcs_info_abbr
+  End
+
+  It abbreviates string to default length
+    let abbr = vcs_info#abbr(hash)
+    Assert LengthOf(abbr, 7)
+    Assert Equals(abbr, hash[: 6])
+  End
+
+  It abbreviates string to length specified
+    let b:vcs_info_abbr = 3
+    let abbr = vcs_info#abbr(hash)
+    Assert LengthOf(abbr, 3)
+    Assert Equals(abbr, hash[: 2])
+
+    let b:vcs_info_abbr = 13
+    let abbr = vcs_info#abbr(hash)
+    Assert LengthOf(abbr, 13)
+    Assert Equals(abbr, hash[: 12])
+  End
+
+  It returns empty string
+    let b:vcs_info_abbr = 0
+    let abbr = vcs_info#abbr(hash)
+    Assert IsString(abbr)
+    Assert Empty(abbr)
+
+    let b:vcs_info_abbr = -1
+    let abbr = vcs_info#abbr(hash)
+    Assert IsString(abbr)
+    Assert Empty(abbr)
+  End
+
+  It returns string as-is
+    let b:vcs_info_abbr = len(hash)
+    let abbr = vcs_info#abbr(hash)
+    Assert LengthOf(abbr, len(hash))
+    Assert Equals(abbr, hash)
+
+    let b:vcs_info_abbr = len(hash) + 1
+    let abbr = vcs_info#abbr(hash)
+    Assert LengthOf(abbr, len(hash))
+    Assert Equals(abbr, hash)
+  End
+End

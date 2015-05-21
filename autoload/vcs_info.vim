@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-20
+" Last Change: 2015-05-21
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -33,6 +33,11 @@ function! vcs_info#get() abort
     return {}
   endif
   return call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
+endfunction
+
+function! vcs_info#abbr(hash) abort
+  let n = get(b:, 'vcs_info_abbr', get(g:, 'vcs_info_abbr', 7))
+  return 0 < n ? a:hash[: n - 1] : ''
 endfunction
 
 function! vcs_info#reload() abort
