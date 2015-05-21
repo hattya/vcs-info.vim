@@ -1,0 +1,259 @@
+Describe Git barckend
+  Before all
+    let path = TempDir()
+    let git_dir = path . '/.git'
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    let hash = SHA1()
+    call mkdir(git_dir, 'p')
+    call mkdir(git_dir . '/objects')
+    call mkdir(git_dir . '/refs')
+    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
+    if !bufexists(path . '/a.txt')
+      execute 'edit ' . path . '/a.txt'
+    else
+      execute 'buffer '. path . '/a.txt'
+    endif
+  End
+
+  After each
+    bwipe!
+    call RemoveAll(git_dir)
+  End
+
+  It detects repository
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': '',
+    \             })
+  End
+
+  It detects repository (submodule)
+    call mkdir(git_dir . '/modules/m', 'p')
+    call writefile(['ref: refs/heads/master'], git_dir . '/modules/m/HEAD')
+    call mkdir(path . '/m')
+    call writefile(['gitdir: ../.git/modules/m'], path . '/m/.git')
+    execute 'edit ' . path . '/m/a.txt'
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path . '/m',
+    \               'dir':    git_dir . '/modules/m',
+    \               'head':   'master',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is in 'detached HEAD' state
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   hash[: 6],
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is checked out v1.0 tag
+    call mkdir(git_dir . '/refs/tags')
+    call writefile([hash], git_dir . '/refs/tags/v1.0')
+
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'v1.0',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is doing 'rebase'
+    call mkdir(git_dir . '/rebase-apply')
+    call writefile([], git_dir . '/rebase-apply/rebasing')
+
+    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'rebase',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'rebase',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['detached HEAD'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'detached HEAD',
+    \               'action': 'rebase',
+    \             })
+  End
+
+  It detects that it is doing 'am'
+    call mkdir(git_dir . '/rebase-apply')
+    call writefile([], git_dir . '/rebase-apply/applying')
+
+    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'am',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'am',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['detached HEAD'], git_dir . '/rebase-apply/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'detached HEAD',
+    \               'action': 'am',
+    \             })
+  End
+
+  It detects that it is doing 'merge'
+    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
+    call writefile([hash], git_dir . '/MERGE_HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'merge',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile([hash], git_dir . '/MERGE_HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   hash[: 6],
+    \               'action': 'merge',
+    \             })
+  End
+
+  It detects that it is doing 'rebase -i'
+    call mkdir(git_dir . '/rebase-merge')
+    call writefile([], git_dir . '/rebase-merge/interactive')
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-merge/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'rebase-i',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['detached HEAD'], git_dir . '/rebase-merge/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'detached HEAD',
+    \               'action': 'rebase-i',
+    \             })
+  End
+
+  It detects that it is doing 'rebase -m'
+    call mkdir(git_dir . '/rebase-merge')
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['refs/heads/master'], git_dir . '/rebase-merge/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'rebase-m',
+    \             })
+
+    call writefile([hash], git_dir . '/HEAD')
+    call writefile(['detached HEAD'], git_dir . '/rebase-merge/head-name')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'detached HEAD',
+    \               'action': 'rebase-m',
+    \             })
+  End
+
+  It detects that it is doing 'bisect'
+    call writefile([], git_dir . '/BISECT_LOG')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'bisect',
+    \             })
+  End
+
+  It detects that it is doing 'cherry-pick'
+    call writefile([], git_dir . '/CHERRY_PICK_HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'master',
+    \               'action': 'cherry',
+    \             })
+  End
+End
