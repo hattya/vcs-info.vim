@@ -1,0 +1,39 @@
+Describe CVS backend
+  Before all
+    let path = TempDir()
+    let cvs_dir = path . '/CVS'
+
+    call mkdir(cvs_dir, 'p')
+    call writefile([], cvs_dir . '/Repository')
+    execute 'edit ' . path . '/a.txt'
+  End
+
+  After all
+    bwipe!
+    call RemoveAll(path)
+  End
+
+  It detects repository
+    call writefile(['project'], cvs_dir . '/Repository')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'cvs',
+    \               'root':   path,
+    \               'dir':    cvs_dir,
+    \               'head':   'project',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is checked out subset of module
+    call writefile(['project/dir'], cvs_dir . '/Repository')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'cvs',
+    \               'root':   path,
+    \               'dir':    cvs_dir,
+    \               'head':   'project/dir',
+    \               'action': '',
+    \             })
+  End
+End
