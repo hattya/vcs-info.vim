@@ -1,0 +1,94 @@
+Describe Mercurial backend
+  Before all
+    let path = TempDir()
+    let hg_dir = path . '/.hg'
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    let hash = SHA1()
+    call mkdir(hg_dir, 'p')
+    if !bufexists(path . '/a.txt')
+      execute 'edit ' . path . '/a.txt'
+    else
+      execute 'buffer '. path . '/a.txt'
+    endif
+  End
+
+  After each
+    bwipe!
+    call RemoveAll(hg_dir)
+  End
+
+  It detects repository
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'default',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is activated bookmark
+    call writefile(['@'], hg_dir . '/bookmarks.current')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'default',
+    \               'action': '',
+    \             })
+
+    call writefile(['master'], hg_dir . '/bookmarks.current')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'master',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is checked out stable branch
+    call writefile(['stable'], hg_dir . '/branch')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'stable',
+    \               'action': '',
+    \             })
+  End
+
+  It detects that it is doing 'merge'
+    call mkdir(hg_dir . '/merge')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'default',
+    \               'action': 'merge',
+    \             })
+  End
+
+  It detects that it is doing 'rebase'
+    call writefile([], hg_dir . '/rebasestate')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'mercurial',
+    \               'root':   path,
+    \               'dir':    hg_dir,
+    \               'head':   'default',
+    \               'action': 'rebase',
+    \             })
+  End
+End
