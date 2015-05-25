@@ -66,9 +66,39 @@ Describe Git barckend
   End
 
   It detects that it is checked out v1.0 tag
+    let packed_refs = [
+    \  '# pack-refs with: peeled fully-peeled ',
+    \  hash . ' refs/tags/v1.0',
+    \]
+    call writefile(packed_refs, git_dir . '/packed-refs')
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'v1.0',
+    \               'action': '',
+    \             })
+
+    let packed_refs = [
+    \  '# pack-refs with: peeled fully-peeled ',
+    \  SHA1() . ' refs/tags/v1.0',
+    \  '^' . hash,
+    \]
+    call writefile(packed_refs, git_dir . '/packed-refs')
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'v1.0',
+    \               'action': '',
+    \             })
+
     call mkdir(git_dir . '/refs/tags')
     call writefile([hash], git_dir . '/refs/tags/v1.0')
-
     call writefile([hash], git_dir . '/HEAD')
     Assert Equals(vcs_info#get(),
     \             {
