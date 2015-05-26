@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-25
+" Last Change: 2015-05-26
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -58,7 +58,7 @@ function! vcs_info#git#get(git_dir) abort
     let info.head = s:symbolic_ref(a:git_dir)
     if empty(info.head)
       let head = s:read(a:git_dir . '/HEAD')
-      let info.head = s:find_tag(a:git_dir, head)
+      let info.head = s:find_ref(a:git_dir, head)
       if empty(info.head)
         let info.head = vcs_info#abbr(head)
       endif
@@ -76,25 +76,28 @@ function! vcs_info#git#get(git_dir) abort
   return info
 endfunction
 
-function! s:find_tag(git_dir, hash) abort
-  for tag in split(glob(a:git_dir . '/refs/tags/*', 1), '\n')
-    if s:read(tag) ==# a:hash
-      return 'refs/tags/' . fnamemodify(tag, ':t')
+function! s:find_ref(git_dir, hash) abort
+  for ref in split(glob(a:git_dir . '/refs/*/*', 1), '\n')
+    if ref =~# '\v/refs/%(heads|tags)/' && s:read(ref) ==# a:hash
+      return ref[len(a:git_dir) + 1 :]
     endif
   endfor
   if filereadable(a:git_dir . '/packed-refs')
     let tag = ''
     for l in readfile(a:git_dir . '/packed-refs')[1 :]
-      let ref = split(l)
-      if ref[0][0] ==# '^'
-        if ref[0][1 :] ==# a:hash
+      if l[0] ==# '^'
+        if l[1 :] ==# a:hash
           return tag
         endif
-      elseif ref[1] =~# '^refs/tags/'
-        if ref[0] ==# a:hash
-          return ref[1]
+      else
+        let ref = l[41 :]
+        if l[: 39] ==# a:hash
+          if ref =~# '\v^refs/%(heads|tags)/'
+            return ref
+          endif
+        elseif ref =~# '^refs/tags/'
+          let tag = ref
         endif
-        let tag = ref[1]
       endif
     endfor
   endif

@@ -65,6 +65,35 @@ Describe Git barckend
     \             })
   End
 
+  It detects that it is checked out next branch
+    let packed_refs = [
+    \  '# pack-refs with: peeled fully-peeled ',
+    \  hash . ' refs/heads/next',
+    \]
+    call writefile(packed_refs, git_dir . '/packed-refs')
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'next',
+    \               'action': '',
+    \             })
+
+    call mkdir(git_dir . '/refs/heads')
+    call writefile([hash], git_dir . '/refs/heads/next')
+    call writefile([hash], git_dir . '/HEAD')
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':   'git',
+    \               'root':   path,
+    \               'dir':    git_dir,
+    \               'head':   'next',
+    \               'action': '',
+    \             })
+  End
+
   It detects that it is checked out v1.0 tag
     let packed_refs = [
     \  '# pack-refs with: peeled fully-peeled ',
