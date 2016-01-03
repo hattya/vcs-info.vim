@@ -1,11 +1,11 @@
 Describe CVS backend
   Before all
     let path = TempDir()
-    let cvs_dir = path . '/CVS'
+    let cvs_dir = Join(path, 'CVS')
 
     call mkdir(cvs_dir, 'p')
-    call writefile([], cvs_dir . '/Repository')
-    edit `=path . '/a.txt'`
+    call writefile([], Join(cvs_dir, 'Repository'))
+    edit `=Join(path, 'a.txt')`
   End
 
   After all
@@ -14,7 +14,7 @@ Describe CVS backend
   End
 
   It detects repository
-    call writefile(['project'], cvs_dir . '/Repository')
+    call writefile(['project'], Join(cvs_dir, 'Repository'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'cvs',
@@ -26,7 +26,7 @@ Describe CVS backend
   End
 
   It detects that it is checked out subset of module
-    call writefile(['project/dir'], cvs_dir . '/Repository')
+    call writefile(['project/dir'], Join(cvs_dir, 'Repository'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'cvs',

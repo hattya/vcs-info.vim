@@ -1,7 +1,7 @@
 Describe Mercurial backend
   Before all
     let path = TempDir()
-    let hg_dir = path . '/.hg'
+    let hg_dir = Join(path, '.hg')
   End
 
   After all
@@ -11,7 +11,7 @@ Describe Mercurial backend
   Before each
     let hash = SHA1()
     call mkdir(hg_dir, 'p')
-    edit `=path . '/a.txt'`
+    edit `=Join(path, 'a.txt')`
   End
 
   After each
@@ -31,7 +31,7 @@ Describe Mercurial backend
   End
 
   It detects that it is activated bookmark
-    call writefile(['@'], hg_dir . '/bookmarks.current')
+    call writefile(['@'], Join(hg_dir, 'bookmarks.current'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'mercurial',
@@ -41,7 +41,7 @@ Describe Mercurial backend
     \               'action': '',
     \             })
 
-    call writefile(['master'], hg_dir . '/bookmarks.current')
+    call writefile(['master'], Join(hg_dir, 'bookmarks.current'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'mercurial',
@@ -53,7 +53,7 @@ Describe Mercurial backend
   End
 
   It detects that it is checked out stable branch
-    call writefile(['stable'], hg_dir . '/branch')
+    call writefile(['stable'], Join(hg_dir, 'branch'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'mercurial',
@@ -65,7 +65,7 @@ Describe Mercurial backend
   End
 
   It detects that it is doing 'merge'
-    call mkdir(hg_dir . '/merge')
+    call mkdir(Join(hg_dir, 'merge'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'mercurial',
@@ -77,7 +77,7 @@ Describe Mercurial backend
   End
 
   It detects that it is doing 'rebase'
-    call writefile([], hg_dir . '/rebasestate')
+    call writefile([], Join(hg_dir, 'rebasestate'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':    'mercurial',

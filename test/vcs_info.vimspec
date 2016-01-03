@@ -1,7 +1,7 @@
 Describe #get()
   Before all
     let path = TempDir()
-    edit `=path . '/a.txt'`
+    edit `=Join(path, 'a.txt')`
   End
 
   After all

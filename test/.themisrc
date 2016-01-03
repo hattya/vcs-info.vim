@@ -3,6 +3,10 @@ call themis#helper('command').with(s:assert)
 
 let s:is_win = has('win32') || has('win64') || has('win95') || has('win16')
 
+function! Join(...) abort
+  return join(a:000, s:is_win ? '\' : '/')
+endfunction
+
 function! RemoveAll(path) abort
   if &shell =~? 'sh$'
     silent call system('rm -rf ' . shellescape(a:path))
@@ -21,7 +25,7 @@ function! SHA1() abort
 endfunction
 
 function! TempDir() abort
-  let path = substitute(tempname(), '\\', '/', 'g')
+  let path = tempname()
   call mkdir(path, 'p')
   return path
 endfunction

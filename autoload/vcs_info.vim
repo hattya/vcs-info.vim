@@ -1,16 +1,17 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-25
+" Last Change: 2016-01-03
 " License:     MIT License
 
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:is_win = has('win32') || has('win64') || has('win95') || has('win16')
 let s:vcses = []
 
 function! vcs_info#detect(path) abort
   unlet! b:vcs_info
-  let path = substitute(resolve(a:path), '\\', '/', 'g')
+  let path = s:to_slash(a:path)
   if !(empty(path) || isdirectory(path))
     let path = fnamemodify(path, ':h')
   endif
@@ -35,7 +36,12 @@ function! vcs_info#get() abort
   if !exists('b:vcs_info')
     return {}
   endif
-  return call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
+  let info = call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
+  if !empty(info)
+    let info.root = s:from_slash(info.root)
+    let info.dir = s:from_slash(info.dir)
+  endif
+  return info
 endfunction
 
 function! vcs_info#abbr(hash) abort
@@ -49,6 +55,14 @@ function! vcs_info#reload() abort
     call add(s:vcses, fnamemodify(f, ':t:r'))
   endfor
   call sort(s:vcses)
+endfunction
+
+function! s:from_slash(path) abort
+  return s:is_win ? substitute(a:path, '/', '\', 'g') : a:path
+endfunction
+
+function! s:to_slash(path) abort
+  return s:is_win ? substitute(a:path, '\\', '/', 'g') : a:path
 endfunction
 
 call vcs_info#reload()

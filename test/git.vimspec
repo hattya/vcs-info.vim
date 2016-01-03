@@ -1,7 +1,7 @@
 Describe Git barckend
   Before all
     let path = TempDir()
-    let git_dir = path . '/.git'
+    let git_dir = Join(path, '.git')
   End
 
   After all
@@ -11,10 +11,10 @@ Describe Git barckend
   Before each
     let hash = SHA1()
     call mkdir(git_dir, 'p')
-    call mkdir(git_dir . '/objects')
-    call mkdir(git_dir . '/refs')
-    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
-    edit `=path . '/a.txt'`
+    call mkdir(Join(git_dir, 'objects'))
+    call mkdir(Join(git_dir, 'refs'))
+    call writefile(['ref: refs/heads/master'], Join(git_dir, 'HEAD'))
+    edit `=Join(path, 'a.txt')`
   End
 
   After each
@@ -34,23 +34,23 @@ Describe Git barckend
   End
 
   It detects repository (submodule)
-    call mkdir(git_dir . '/modules/m', 'p')
-    call writefile(['ref: refs/heads/master'], git_dir . '/modules/m/HEAD')
-    call mkdir(path . '/m')
-    call writefile(['gitdir: ../.git/modules/m'], path . '/m/.git')
-    edit `=path . '/m/a.txt'`
+    call mkdir(Join(git_dir, 'modules', 'm'), 'p')
+    call writefile(['ref: refs/heads/master'], Join(git_dir, 'modules', 'm', 'HEAD'))
+    call mkdir(Join(path, 'm'))
+    call writefile(['gitdir: ../.git/modules/m'], Join(path, 'm', '.git'))
+    edit `=Join(path, 'm', 'a.txt')`
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
-    \               'root':   path . '/m',
-    \               'dir':    git_dir . '/modules/m',
+    \               'root':   Join(path, 'm'),
+    \               'dir':    Join(git_dir, 'modules', 'm'),
     \               'head':   'master',
     \               'action': '',
     \             })
   End
 
   It detects that it is in 'detached HEAD' state
-    call writefile([hash], git_dir . '/HEAD')
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -66,8 +66,8 @@ Describe Git barckend
     \  '# pack-refs with: peeled fully-peeled ',
     \  hash . ' refs/heads/next',
     \]
-    call writefile(packed_refs, git_dir . '/packed-refs')
-    call writefile([hash], git_dir . '/HEAD')
+    call writefile(packed_refs, Join(git_dir, 'packed-refs'))
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -77,9 +77,9 @@ Describe Git barckend
     \               'action': '',
     \             })
 
-    call mkdir(git_dir . '/refs/heads')
-    call writefile([hash], git_dir . '/refs/heads/next')
-    call writefile([hash], git_dir . '/HEAD')
+    call mkdir(Join(git_dir, 'refs', 'heads'))
+    call writefile([hash], Join(git_dir, 'refs', 'heads', 'next'))
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -95,8 +95,8 @@ Describe Git barckend
     \  '# pack-refs with: peeled fully-peeled ',
     \  hash . ' refs/tags/v1.0',
     \]
-    call writefile(packed_refs, git_dir . '/packed-refs')
-    call writefile([hash], git_dir . '/HEAD')
+    call writefile(packed_refs, Join(git_dir, 'packed-refs'))
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -111,8 +111,8 @@ Describe Git barckend
     \  SHA1() . ' refs/tags/v1.0',
     \  '^' . hash,
     \]
-    call writefile(packed_refs, git_dir . '/packed-refs')
-    call writefile([hash], git_dir . '/HEAD')
+    call writefile(packed_refs, Join(git_dir, 'packed-refs'))
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -122,9 +122,9 @@ Describe Git barckend
     \               'action': '',
     \             })
 
-    call mkdir(git_dir . '/refs/tags')
-    call writefile([hash], git_dir . '/refs/tags/v1.0')
-    call writefile([hash], git_dir . '/HEAD')
+    call mkdir(Join(git_dir, 'refs', 'tags'))
+    call writefile([hash], Join(git_dir, 'refs', 'tags', 'v1.0'))
+    call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -136,11 +136,11 @@ Describe Git barckend
   End
 
   It detects that it is doing 'rebase'
-    call mkdir(git_dir . '/rebase-apply')
-    call writefile([], git_dir . '/rebase-apply/rebasing')
+    call mkdir(Join(git_dir, 'rebase-apply'))
+    call writefile([], Join(git_dir, 'rebase-apply', 'rebasing'))
 
-    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    call writefile(['ref: refs/heads/master'], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -150,8 +150,8 @@ Describe Git barckend
     \               'action': 'rebase',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -161,8 +161,8 @@ Describe Git barckend
     \               'action': 'rebase',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['detached HEAD'], git_dir . '/rebase-apply/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['detached HEAD'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -174,11 +174,11 @@ Describe Git barckend
   End
 
   It detects that it is doing 'am'
-    call mkdir(git_dir . '/rebase-apply')
-    call writefile([], git_dir . '/rebase-apply/applying')
+    call mkdir(Join(git_dir, 'rebase-apply'))
+    call writefile([], Join(git_dir, 'rebase-apply', 'applying'))
 
-    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    call writefile(['ref: refs/heads/master'], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -188,8 +188,8 @@ Describe Git barckend
     \               'action': 'am',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-apply/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -199,8 +199,8 @@ Describe Git barckend
     \               'action': 'am',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['detached HEAD'], git_dir . '/rebase-apply/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['detached HEAD'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -212,8 +212,8 @@ Describe Git barckend
   End
 
   It detects that it is doing 'merge'
-    call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
-    call writefile([hash], git_dir . '/MERGE_HEAD')
+    call writefile(['ref: refs/heads/master'], Join(git_dir, 'HEAD'))
+    call writefile([hash], Join(git_dir, 'MERGE_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -223,8 +223,8 @@ Describe Git barckend
     \               'action': 'merge',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile([hash], git_dir . '/MERGE_HEAD')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile([hash], Join(git_dir, 'MERGE_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -236,11 +236,11 @@ Describe Git barckend
   End
 
   It detects that it is doing 'rebase -i'
-    call mkdir(git_dir . '/rebase-merge')
-    call writefile([], git_dir . '/rebase-merge/interactive')
+    call mkdir(Join(git_dir, 'rebase-merge'))
+    call writefile([], Join(git_dir, 'rebase-merge', 'interactive'))
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-merge/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -250,8 +250,8 @@ Describe Git barckend
     \               'action': 'rebase-i',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['detached HEAD'], git_dir . '/rebase-merge/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['detached HEAD'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -263,10 +263,10 @@ Describe Git barckend
   End
 
   It detects that it is doing 'rebase -m'
-    call mkdir(git_dir . '/rebase-merge')
+    call mkdir(Join(git_dir, 'rebase-merge'))
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['refs/heads/master'], git_dir . '/rebase-merge/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['refs/heads/master'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -276,8 +276,8 @@ Describe Git barckend
     \               'action': 'rebase-m',
     \             })
 
-    call writefile([hash], git_dir . '/HEAD')
-    call writefile(['detached HEAD'], git_dir . '/rebase-merge/head-name')
+    call writefile([hash], Join(git_dir, 'HEAD'))
+    call writefile(['detached HEAD'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -289,7 +289,7 @@ Describe Git barckend
   End
 
   It detects that it is doing 'bisect'
-    call writefile([], git_dir . '/BISECT_LOG')
+    call writefile([], Join(git_dir, 'BISECT_LOG'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
@@ -301,7 +301,7 @@ Describe Git barckend
   End
 
   It detects that it is doing 'cherry-pick'
-    call writefile([], git_dir . '/CHERRY_PICK_HEAD')
+    call writefile([], Join(git_dir, 'CHERRY_PICK_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',
