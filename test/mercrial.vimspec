@@ -11,11 +11,7 @@ Describe Mercurial backend
   Before each
     let hash = SHA1()
     call mkdir(hg_dir, 'p')
-    if !bufexists(path . '/a.txt')
-      execute 'edit ' . path . '/a.txt'
-    else
-      execute 'buffer '. path . '/a.txt'
-    endif
+    edit `=path . '/a.txt'`
   End
 
   After each

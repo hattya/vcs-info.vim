@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/mercurial.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-23
+" Last Change: 2016-01-03
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -28,11 +28,9 @@ function! vcs_info#mercurial#get(hg_dir) abort
       let info.head = mark
     endif
   endif
-  if isdirectory(a:hg_dir . '/merge')
-    let info.action = 'merge'
-  elseif filereadable(a:hg_dir . '/rebasestate')
-    let info.action = 'rebase'
-  endif
+  let info.action = isdirectory(a:hg_dir . '/merge')        ? 'merge' :
+  \                 filereadable(a:hg_dir . '/rebasestate') ? 'rebase' :
+  \                                                           ''
   return info
 endfunction
 

@@ -3,14 +3,6 @@ call themis#helper('command').with(s:assert)
 
 let s:is_win = has('win32') || has('win64') || has('win95') || has('win16')
 
-function! SHA1() abort
-  let hash = ''
-  for _ in range(20)
-    let hash .= printf('%02x', str2nr(reltimestr(reltime())[-3 :]) % 0xff)
-  endfor
-  return hash
-endfunction
-
 function! RemoveAll(path) abort
   if &shell =~? 'sh$'
     silent call system('rm -rf ' . shellescape(a:path))
@@ -18,6 +10,14 @@ function! RemoveAll(path) abort
     let cmd = isdirectory(a:path) ? 'rmdir /S /Q' : 'del'
     silent call system(cmd . ' "' . a:path . '"')
   endif
+endfunction
+
+function! SHA1() abort
+  let hash = ''
+  for _ in range(20)
+    let hash .= printf('%02x', str2nr(reltimestr(reltime())[-3 :]) % 0xff)
+  endfor
+  return hash
 endfunction
 
 function! TempDir() abort

@@ -14,11 +14,7 @@ Describe Git barckend
     call mkdir(git_dir . '/objects')
     call mkdir(git_dir . '/refs')
     call writefile(['ref: refs/heads/master'], git_dir . '/HEAD')
-    if !bufexists(path . '/a.txt')
-      execute 'edit ' . path . '/a.txt'
-    else
-      execute 'buffer '. path . '/a.txt'
-    endif
+    edit `=path . '/a.txt'`
   End
 
   After each
@@ -42,7 +38,7 @@ Describe Git barckend
     call writefile(['ref: refs/heads/master'], git_dir . '/modules/m/HEAD')
     call mkdir(path . '/m')
     call writefile(['gitdir: ../.git/modules/m'], path . '/m/.git')
-    execute 'edit ' . path . '/m/a.txt'
+    edit `=path . '/m/a.txt'`
     Assert Equals(vcs_info#get(),
     \             {
     \               'vcs':   'git',

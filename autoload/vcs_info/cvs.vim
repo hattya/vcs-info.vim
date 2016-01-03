@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/cvs.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-23
+" Last Change: 2016-01-03
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -10,9 +10,7 @@ function! vcs_info#cvs#detect(path) abort
   let cvs = a:path . '/CVS'
   if isdirectory(cvs)
     let par = fnamemodify(a:path, ':h')
-    if a:path ==# par ||
-    \  !isdirectory(par . '/CVS') ||
-    \  s:read(cvs . '/Root') !=# s:read(par . '/CVS/Root')
+    if a:path ==# par || !isdirectory(par . '/CVS') || s:read(cvs . '/Root') !=# s:read(par . '/CVS/Root')
       return cvs
     endif
   endif

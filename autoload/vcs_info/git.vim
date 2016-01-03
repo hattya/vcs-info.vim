@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2015-05-26
+" Last Change: 2016-01-03
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -10,9 +10,7 @@ function! vcs_info#git#detect(path) abort
   let _git = a:path . '/.git'
   let ft = getftype(_git)
   if ft ==# 'dir'
-    if isdirectory(_git . '/objects') &&
-    \  isdirectory(_git . '/refs') &&
-    \  10 < getfsize(_git . '/HEAD')
+    if isdirectory(_git . '/objects') && isdirectory(_git . '/refs') && 10 < getfsize(_git . '/HEAD')
       return _git
     endif
   elseif ft ==# 'file'
@@ -38,13 +36,9 @@ function! vcs_info#git#get(git_dir) abort
     if empty(info.head)
       let info.head = s:read(a:git_dir . '/rebase-apply/head-name')
     endif
-    if filereadable(a:git_dir . '/rebase-apply/rebasing')
-      let info.action = 'rebase'
-    elseif filereadable(a:git_dir . '/rebase-apply/applying')
-      let info.action = 'am'
-    else
-      let info.action = 'am/rebase'
-    endif
+    let info.action = filereadable(a:git_dir . '/rebase-apply/rebasing') ? 'rebase' :
+    \                 filereadable(a:git_dir . '/rebase-apply/applying') ? 'am' :
+    \                                                                      'am/rebase'
   elseif isdirectory(a:git_dir . '/rebase-merge')
     let info.head = s:read(a:git_dir . '/rebase-merge/head-name')
     let info.action = filereadable(a:git_dir . '/rebase-merge/interactive') ? 'rebase-i' : 'rebase-m'
@@ -63,11 +57,9 @@ function! vcs_info#git#get(git_dir) abort
         let info.head = vcs_info#abbr(head)
       endif
     endif
-    if filereadable(a:git_dir . '/BISECT_LOG')
-      let info.action = 'bisect'
-    elseif filereadable(a:git_dir . '/CHERRY_PICK_HEAD')
-      let info.action = 'cherry'
-    endif
+    let info.action = filereadable(a:git_dir . '/BISECT_LOG')       ? 'bisect' :
+    \                 filereadable(a:git_dir . '/CHERRY_PICK_HEAD') ? 'cherry' :
+    \                                                                 ''
   endif
   let i = matchend(info.head, '^refs/.\{-}/')
   if i != -1

@@ -5,7 +5,7 @@ Describe CVS backend
 
     call mkdir(cvs_dir, 'p')
     call writefile([], cvs_dir . '/Repository')
-    execute 'edit ' . path . '/a.txt'
+    edit `=path . '/a.txt'`
   End
 
   After all
