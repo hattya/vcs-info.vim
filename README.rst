@@ -30,9 +30,16 @@ NeoBundle_
 
    NeoBundle 'hattya/vcs-info.vim'
 
+vim-plug_
+
+.. code:: vim
+
+   Plug 'hattya/vcs-info.vim'
+
 .. _pathogen.vim: https://github.com/tpope/vim-pathogen
-.. _Vundle: https://github.com/gmarik/Vundle.vim
+.. _Vundle: https://github.com/VundleVim/Vundle.vim
 .. _NeoBundle: https://github.com/Shougo/neobundle.vim
+.. _vim-plug: https://github.com/junegunn/vim-plug
 
 
 Testing
