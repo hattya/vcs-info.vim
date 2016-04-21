@@ -1,0 +1,76 @@
+*vcs-info.txt*	Retrieve VCS information
+
+Author:      Akinori Hattori <hattya@gmail.com>
+Repository:  https://github.com/hattya/vcs-info.vim
+Last Change: 2016-04-21
+License:     MIT License
+
+CONTENTS					*vcs-info-contents*
+
+Introduction					|vcs-info-introduction|
+Usage						|vcs-info-usage|
+Interface					|vcs-info-interface|
+  Functions					|vcs-info-functions|
+  Variables					|vcs-info-variables|
+
+==============================================================================
+INTRODUCTION					*vcs-info-introduction*
+
+*vcs-info.vim* is a Vim plugin to retrieve VCS information of the working
+directory where the currently edited file exists. It is inspired by Zsh's
+vcs_info.
+
+Supported VCS:~
+	CVS
+	Git
+	Mercurial
+
+==============================================================================
+USAGE						*vcs-info-usage*
+
+|vcs-info.vim| automatically detects a VCS when editing a file, so you can
+retrieve VCS information by calling |vcs_info#get()| like:
+>
+	let info = vcs_info#get()
+	if !empty(info)
+	  let s = info.head
+	  if !empty(info.action)
+	    let s .= ':' . info.action
+	  endif
+	endif
+
+==============================================================================
+INTERFACE					*vcs-info-interface*
+
+------------------------------------------------------------------------------
+FUNCTIONS					*vcs-info-functions*
+
+vcs_info#get()					*vcs_info#get()*
+	Returns VCS information as a |Dictionary| which contains the
+	following items. It is empty if no working directory found.
+
+	"vcs"
+		The VCS in use.
+
+	"root"
+		The root of the current working directory.
+
+	"dir"
+		The control directory of the VCS.
+
+	"head"
+		A branch name, tag name or revision number.
+
+	"action"
+		An identifier which represents what is going on in the current
+		working directory; like an interactive rebase.
+
+------------------------------------------------------------------------------
+VARIABLES					*vcs-info-variables*
+
+g:vcs_info_abbr					*g:vcs_info_abbr*
+b:vcs_info_abbr					*b:vcs_info_abbr*
+	The length of a revision number. The default value is 7.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet
