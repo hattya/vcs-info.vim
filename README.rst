@@ -1,14 +1,18 @@
 vcs-info.vim
 ============
 
-vcs-info.vim is a Vim plugin to retrieve VCS information of the working copy
-where the currently edited file exists. It is inspired by Zsh_'s vcs_info_.
+vcs-info.vim is a Vim plugin to retrieve VCS information of the working
+directory where the currently edited file exists. It is inspired by Zsh_'s
+vcs_info_.
 
 .. image:: https://drone.io/github.com/hattya/vcs-info.vim/status.png
    :target: https://drone.io/github.com/hattya/vcs-info.vim/latest
 
 .. image:: https://ci.appveyor.com/api/projects/status/4yda92saqm3sj6nd?svg=true
    :target: https://ci.appveyor.com/project/hattya/vcs-info-vim
+
+.. image:: https://img.shields.io/badge/doc-:h%20vcs--info-blue.svg
+   :target: doc/vcs-info.txt
 
 .. _Zsh: http://www.zsh.org/
 .. _vcs_info: http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#Version-Control-Information
@@ -46,6 +50,20 @@ vim-plug_
 .. _Vundle: https://github.com/VundleVim/Vundle.vim
 .. _NeoBundle: https://github.com/Shougo/neobundle.vim
 .. _vim-plug: https://github.com/junegunn/vim-plug
+
+
+Usage
+-----
+
+.. code:: vim
+
+   let info = vcs_info#get()
+   if !empty(info)
+     let s = info.head
+     if !empty(info.action)
+       let s .= ':' . info.action
+     endif
+   endif
 
 
 Testing
