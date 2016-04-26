@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-01-03
+" Last Change: 2016-04-26
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -33,7 +33,7 @@ function! vcs_info#git#get(git_dir) abort
   \}
   if isdirectory(a:git_dir . '/rebase-apply')
     let info.head = s:symbolic_ref(a:git_dir)
-    if empty(info.head)
+    if info.head ==# ''
       let info.head = s:read(a:git_dir . '/rebase-apply/head-name')
     endif
     let info.action = filereadable(a:git_dir . '/rebase-apply/rebasing') ? 'rebase' :
@@ -44,16 +44,16 @@ function! vcs_info#git#get(git_dir) abort
     let info.action = filereadable(a:git_dir . '/rebase-merge/interactive') ? 'rebase-i' : 'rebase-m'
   elseif filereadable(a:git_dir . '/MERGE_HEAD')
     let info.head = s:symbolic_ref(a:git_dir)
-    if empty(info.head)
+    if info.head ==# ''
       let info.head = vcs_info#abbr(s:read(a:git_dir . '/MERGE_HEAD'))
     endif
     let info.action = 'merge'
   else
     let info.head = s:symbolic_ref(a:git_dir)
-    if empty(info.head)
+    if info.head ==# ''
       let head = s:read(a:git_dir . '/HEAD')
       let info.head = s:find_ref(a:git_dir, head)
-      if empty(info.head)
+      if info.head ==# ''
         let info.head = vcs_info#abbr(head)
       endif
     endif

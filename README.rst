@@ -60,7 +60,7 @@ Usage
    let info = vcs_info#get()
    if !empty(info)
      let s = info.head
-     if !empty(info.action)
+     if info.action !=# ''
        let s .= ':' . info.action
      endif
    endif

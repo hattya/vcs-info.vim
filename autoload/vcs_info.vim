@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-01-03
+" Last Change: 2016-04-26
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -12,14 +12,14 @@ let s:vcses = []
 function! vcs_info#detect(path) abort
   unlet! b:vcs_info
   let path = s:to_slash(a:path)
-  if !(empty(path) || isdirectory(path))
+  if path !=# '' && !isdirectory(path)
     let path = fnamemodify(path, ':h')
   endif
   let prev = ''
   while path !=# prev
     for vcs in s:vcses
       let dir = call('vcs_info#' . vcs . '#detect', [path])
-      if !empty(dir)
+      if dir !=# ''
         let b:vcs_info = {
         \  'vcs': vcs,
         \  'dir': dir,
