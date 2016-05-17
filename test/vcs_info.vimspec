@@ -1,12 +1,18 @@
 Describe #get()
   Before all
     let path = TempDir()
-    edit `=Join(path, 'a.txt')`
   End
 
   After all
-    bwipe!
     call RemoveAll(path)
+  End
+
+  Before each
+    edit `=Join(path, 'a.txt')`
+  End
+
+  After each
+    bwipe!
   End
 
   It returns empty dict

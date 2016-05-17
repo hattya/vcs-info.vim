@@ -2,22 +2,28 @@ Describe CVS backend
   Before all
     let path = TempDir()
     let cvs_dir = Join(path, 'CVS')
+  End
 
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
     call mkdir(cvs_dir, 'p')
     call writefile([], Join(cvs_dir, 'Repository'))
     edit `=Join(path, 'a.txt')`
   End
 
-  After all
+  After each
     bwipe!
-    call RemoveAll(path)
+    call RemoveAll(cvs_dir)
   End
 
   It detects repository
     call writefile(['project'], Join(cvs_dir, 'Repository'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':    'cvs',
+    \               'vcs':    'CVS',
     \               'root':   path,
     \               'dir':    cvs_dir,
     \               'head':   'project',
@@ -29,7 +35,7 @@ Describe CVS backend
     call writefile(['project/dir'], Join(cvs_dir, 'Repository'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':    'cvs',
+    \               'vcs':    'CVS',
     \               'root':   path,
     \               'dir':    cvs_dir,
     \               'head':   'project/dir',

@@ -9,11 +9,11 @@ set cpo&vim
 let s:FP = vital#vcs_info#import('System.Filepath')
 
 function! vcs_info#cvs#detect(path) abort
-  let cvs = s:FP.join(a:path, 'CVS')
-  if isdirectory(cvs)
+  let cvs_dir = s:FP.join(a:path, 'CVS')
+  if isdirectory(cvs_dir)
     let par = s:FP.dirname(a:path)
-    if a:path ==# par || !isdirectory(s:FP.join(par, 'CVS')) || s:read(s:FP.join(cvs, 'Root')) !=# s:read(s:FP.join(par, 'CVS', 'Root'))
-      return cvs
+    if par ==# a:path || !isdirectory(s:FP.join(par, 'CVS')) || vcs_info#readfile(s:FP.join(cvs_dir, 'Root')) !=# vcs_info#readfile(s:FP.join(par, 'CVS', 'Root'))
+      return cvs_dir
     endif
   endif
   return ''
@@ -21,16 +21,12 @@ endfunction
 
 function! vcs_info#cvs#get(cvs_dir) abort
   return {
-  \  'vcs':    'cvs',
+  \  'vcs':    'CVS',
   \  'root':   s:FP.dirname(a:cvs_dir),
   \  'dir':    a:cvs_dir,
-  \  'head':   s:read(s:FP.join(a:cvs_dir, 'Repository')),
+  \  'head':   vcs_info#readfile(s:FP.join(a:cvs_dir, 'Repository')),
   \  'action': '',
   \}
-endfunction
-
-function! s:read(path) abort
-  return filereadable(a:path) ? get(readfile(a:path), 0, '') : ''
 endfunction
 
 let &cpo = s:save_cpo

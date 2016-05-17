@@ -9,23 +9,23 @@ set cpo&vim
 let s:FP = vital#vcs_info#import('System.Filepath')
 
 function! vcs_info#mercurial#detect(path) abort
-  let _hg = s:FP.join(a:path, '.hg')
-  return isdirectory(_hg) ? _hg : ''
+  let hg_dir = s:FP.join(a:path, '.hg')
+  return isdirectory(hg_dir) ? hg_dir : ''
 endfunction
 
 function! vcs_info#mercurial#get(hg_dir) abort
   let info = {
-  \  'vcs':    'mercurial',
+  \  'vcs':    'Mercurial',
   \  'root':   s:FP.dirname(a:hg_dir),
   \  'dir':    a:hg_dir,
   \  'head':   'default',
   \  'action': '',
   \}
   if filereadable(s:FP.join(a:hg_dir, 'branch'))
-    let info.head = s:read(s:FP.join(a:hg_dir, 'branch'))
+    let info.head = vcs_info#readfile(s:FP.join(a:hg_dir, 'branch'))
   endif
   if filereadable(s:FP.join(a:hg_dir, 'bookmarks.current'))
-    let mark = s:read(s:FP.join(a:hg_dir, 'bookmarks.current'))
+    let mark = vcs_info#readfile(s:FP.join(a:hg_dir, 'bookmarks.current'))
     if mark !=# '@'
       let info.head = mark
     endif
@@ -34,10 +34,6 @@ function! vcs_info#mercurial#get(hg_dir) abort
   \                 filereadable(s:FP.join(a:hg_dir, 'rebasestate')) ? 'rebase' :
   \                                                                    ''
   return info
-endfunction
-
-function! s:read(path) abort
-  return filereadable(a:path) ? get(readfile(a:path), 0, '') : ''
 endfunction
 
 let &cpo = s:save_cpo

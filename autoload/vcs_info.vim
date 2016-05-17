@@ -21,7 +21,7 @@ function! vcs_info#detect(path) abort
   let prev = ''
   while path !=# prev
     for vcs in s:vcses
-      let dir = call('vcs_info#' . vcs . '#detect', [path])
+      let dir = vcs_info#{vcs}#detect(path)
       if dir !=# ''
         let b:vcs_info = {
         \  'vcs': vcs,
@@ -39,16 +39,20 @@ function! vcs_info#get() abort
   if !exists('b:vcs_info')
     return {}
   endif
-  return call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
+  return vcs_info#{b:vcs_info.vcs}#get(b:vcs_info.dir)
 endfunction
 
 function! vcs_info#abbr(hash) abort
-  let n = get(b:, 'vcs_info_abbr', get(g:, 'vcs_info_abbr', 7))
-  return 0 < n ? a:hash[: n - 1] : ''
+  let n = s:getvar('vcs_info_abbr', 7)
+  return 0 < n ? a:hash[: n-1] : ''
 endfunction
 
 function! vcs_info#from_slash(path) abort
   return s:V.is_windows() ? substitute(a:path, '/', '\', 'g') : a:path
+endfunction
+
+function! vcs_info#readfile(name) abort
+  return filereadable(a:name) ? join(readfile(a:name), "\n") : ''
 endfunction
 
 function! vcs_info#reload() abort
@@ -61,6 +65,10 @@ endfunction
 
 function! vcs_info#to_slash(path) abort
   return s:V.is_windows() ? substitute(a:path, '\\', '/', 'g') : a:path
+endfunction
+
+function! s:getvar(name, ...) abort
+  return get(b:, a:name, get(g:, a:name, 0 < a:0 ? a:1 : 0))
 endfunction
 
 call vcs_info#reload()

@@ -25,7 +25,7 @@ Describe Git barckend
   It detects repository
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':    'git',
+    \               'vcs':    'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -41,7 +41,7 @@ Describe Git barckend
     edit `=Join(path, 'm', 'a.txt')`
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   Join(path, 'm'),
     \               'dir':    Join(git_dir, 'modules', 'm'),
     \               'head':   'master',
@@ -53,7 +53,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   hash[: 6],
@@ -70,7 +70,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'next',
@@ -82,7 +82,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'next',
@@ -99,7 +99,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'v1.0',
@@ -115,7 +115,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'v1.0',
@@ -127,7 +127,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'v1.0',
@@ -143,7 +143,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -154,7 +154,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -165,7 +165,7 @@ Describe Git barckend
     call writefile(['detached HEAD'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'detached HEAD',
@@ -181,7 +181,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -192,7 +192,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -203,7 +203,7 @@ Describe Git barckend
     call writefile(['detached HEAD'], Join(git_dir, 'rebase-apply', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'detached HEAD',
@@ -216,7 +216,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'MERGE_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -227,7 +227,7 @@ Describe Git barckend
     call writefile([hash], Join(git_dir, 'MERGE_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   hash[: 6],
@@ -243,7 +243,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -254,7 +254,7 @@ Describe Git barckend
     call writefile(['detached HEAD'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'detached HEAD',
@@ -269,7 +269,7 @@ Describe Git barckend
     call writefile(['refs/heads/master'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -280,7 +280,7 @@ Describe Git barckend
     call writefile(['detached HEAD'], Join(git_dir, 'rebase-merge', 'head-name'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'detached HEAD',
@@ -292,7 +292,7 @@ Describe Git barckend
     call writefile([], Join(git_dir, 'BISECT_LOG'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
@@ -304,7 +304,7 @@ Describe Git barckend
     call writefile([], Join(git_dir, 'CHERRY_PICK_HEAD'))
     Assert Equals(vcs_info#get(),
     \             {
-    \               'vcs':   'git',
+    \               'vcs':   'Git',
     \               'root':   path,
     \               'dir':    git_dir,
     \               'head':   'master',
