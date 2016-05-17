@@ -1,36 +1,38 @@
 " File:        autoload/vcs_info/mercurial.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-01-03
+" Last Change: 2016-05-17
 " License:     MIT License
 
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:FP = vital#vcs_info#import('System.Filepath')
+
 function! vcs_info#mercurial#detect(path) abort
-  let _hg = a:path . '/.hg'
+  let _hg = s:FP.join(a:path, '.hg')
   return isdirectory(_hg) ? _hg : ''
 endfunction
 
 function! vcs_info#mercurial#get(hg_dir) abort
   let info = {
   \  'vcs':    'mercurial',
-  \  'root':   fnamemodify(a:hg_dir, ':h'),
+  \  'root':   s:FP.dirname(a:hg_dir),
   \  'dir':    a:hg_dir,
   \  'head':   'default',
   \  'action': '',
   \}
-  if filereadable(a:hg_dir . '/branch')
-    let info.head = s:read(a:hg_dir . '/branch')
+  if filereadable(s:FP.join(a:hg_dir, 'branch'))
+    let info.head = s:read(s:FP.join(a:hg_dir, 'branch'))
   endif
-  if filereadable(a:hg_dir . '/bookmarks.current')
-    let mark = s:read(a:hg_dir . '/bookmarks.current')
+  if filereadable(s:FP.join(a:hg_dir, 'bookmarks.current'))
+    let mark = s:read(s:FP.join(a:hg_dir, 'bookmarks.current'))
     if mark !=# '@'
       let info.head = mark
     endif
   endif
-  let info.action = isdirectory(a:hg_dir . '/merge')        ? 'merge' :
-  \                 filereadable(a:hg_dir . '/rebasestate') ? 'rebase' :
-  \                                                           ''
+  let info.action = isdirectory(s:FP.join(a:hg_dir, 'merge'))        ? 'merge' :
+  \                 filereadable(s:FP.join(a:hg_dir, 'rebasestate')) ? 'rebase' :
+  \                                                                    ''
   return info
 endfunction
 

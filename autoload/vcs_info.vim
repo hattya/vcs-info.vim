@@ -1,19 +1,22 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-04-26
+" Last Change: 2016-05-17
 " License:     MIT License
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:is_win = has('win32') || has('win64') || has('win95') || has('win16')
+let s:L = vital#vcs_info#import('Data.List')
+let s:V = vital#vcs_info#import('Prelude')
+let s:FP = vital#vcs_info#import('System.Filepath')
+
 let s:vcses = []
 
 function! vcs_info#detect(path) abort
   unlet! b:vcs_info
-  let path = s:to_slash(a:path)
+  let path = a:path
   if path !=# '' && !isdirectory(path)
-    let path = fnamemodify(path, ':h')
+    let path = s:FP.dirname(path)
   endif
   let prev = ''
   while path !=# prev
@@ -28,7 +31,7 @@ function! vcs_info#detect(path) abort
       endif
     endfor
     let prev = path
-    let path = fnamemodify(path, ':h')
+    let path = s:FP.dirname(path)
   endwhile
 endfunction
 
@@ -36,12 +39,7 @@ function! vcs_info#get() abort
   if !exists('b:vcs_info')
     return {}
   endif
-  let info = call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
-  if !empty(info)
-    let info.root = s:from_slash(info.root)
-    let info.dir = s:from_slash(info.dir)
-  endif
-  return info
+  return call('vcs_info#' . b:vcs_info.vcs . '#get', [b:vcs_info.dir])
 endfunction
 
 function! vcs_info#abbr(hash) abort
@@ -49,20 +47,20 @@ function! vcs_info#abbr(hash) abort
   return 0 < n ? a:hash[: n - 1] : ''
 endfunction
 
+function! vcs_info#from_slash(path) abort
+  return s:V.is_windows() ? substitute(a:path, '/', '\', 'g') : a:path
+endfunction
+
 function! vcs_info#reload() abort
   let s:vcses = []
-  for f in split(globpath(&runtimepath, 'autoload/vcs_info/*.vim', 1), '\n')
+  for f in s:V.globpath(&runtimepath, s:FP.join('autoload', 'vcs_info', '*.vim'))
     call add(s:vcses, fnamemodify(f, ':t:r'))
   endfor
-  call sort(s:vcses)
+  call s:L.uniq(sort(s:vcses))
 endfunction
 
-function! s:from_slash(path) abort
-  return s:is_win ? substitute(a:path, '/', '\', 'g') : a:path
-endfunction
-
-function! s:to_slash(path) abort
-  return s:is_win ? substitute(a:path, '\\', '/', 'g') : a:path
+function! vcs_info#to_slash(path) abort
+  return s:V.is_windows() ? substitute(a:path, '\\', '/', 'g') : a:path
 endfunction
 
 call vcs_info#reload()
