@@ -107,3 +107,19 @@ Describe #any()
     Assert True(vcs_info#any(path, ['dir', 'file']))
   End
 End
+
+Describe #system
+  Before all
+    let V = vital#vcs_info#import('Prelude')
+  End
+
+  It executes in POSIX locale
+    if V.is_windows()
+      let args = ['cmd', '/c', 'set', '|', 'findstr', '/b', 'L[AC]']
+    else
+      let args = ['env', '|', 'grep', '-a', '"^L[AC]"']
+    endif
+    silent let out = vcs_info#system(args)
+    Assert HasKey(out, 'LC_ALL=C')
+  End
+End

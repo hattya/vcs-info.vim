@@ -1,0 +1,55 @@
+scriptencoding utf-8
+
+Describe Subversion backend
+  Before all
+    let V = vital#vcs_info#import('Prelude')
+
+    let path = TempDir()
+    let repo = Join(path, 'repo')
+    let wc = Join(path, 'wc')
+    let svn_dir = Join(wc, '.svn')
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    if !executable('svnadmin')
+      Skip requires svnadmin in $PATH
+    elseif !executable('svn')
+      Skip requires svn in $PATH
+    endif
+    let cwd = getcwd()
+  End
+
+  After each
+    bwipe!
+    cd `=cwd`
+    for p in V.glob(Join(path, '*'))
+      call RemoveAll(p)
+    endfor
+  End
+
+  It detects repository
+    silent call vcs_info#system(['svnadmin', 'create', repo])
+    silent call vcs_info#system(['svn', 'co', 'file:///' . vcs_info#to_slash(repo), wc])
+    cd `=wc`
+    call mkdir(Join(wc, 'trunk'))
+    silent call vcs_info#system(['svn', 'add', 'trunk'])
+    silent call vcs_info#system(['svn', 'ci', '-m', '""'])
+    cd `=cwd`
+    call RemoveAll(wc)
+    silent call vcs_info#system(['svn', 'co', 'file:///' . vcs_info#to_slash(repo) . '/trunk', wc])
+
+    edit `=Join(wc, 'a.txt')`
+    Assert Equals(vcs_info#get(),
+    \             {
+    \               'vcs':    'Subversion',
+    \               'root':   wc,
+    \               'dir':    svn_dir,
+    \               'head':   'trunk@1',
+    \               'action': '',
+    \             })
+  End
+End

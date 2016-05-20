@@ -8,6 +8,7 @@ set cpo&vim
 
 let s:L = vital#vcs_info#import('Data.List')
 let s:V = vital#vcs_info#import('Prelude')
+let s:P = vital#vcs_info#import('Process')
 let s:FP = vital#vcs_info#import('System.Filepath')
 
 let s:vcses = []
@@ -73,6 +74,23 @@ endfunction
 
 function! vcs_info#to_slash(path) abort
   return s:V.is_windows() ? substitute(a:path, '\\', '/', 'g') : a:path
+endfunction
+
+function! vcs_info#system(args, ...) abort
+  let lc_all = $LC_ALL
+  try
+    let args = a:args
+    if &shell =~? 'sh$'
+      let args = ['env', 'LC_ALL=C'] + args
+    elseif s:V.is_windows()
+      let $LC_ALL = 'C'
+    endif
+    silent return split(call(s:P.system, [args] + a:000), '\n')
+  finally
+    if s:V.is_windows()
+      let $LC_ALL = lc_all
+    endif
+  endtry
 endfunction
 
 function! s:getvar(name, ...) abort
