@@ -68,3 +68,42 @@ Describe #abbr()
     Assert Equals(abbr, hash)
   End
 End
+
+Describe #all()
+  Before all
+    let path = TempDir()
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  It returns true
+    call mkdir(Join(path, 'dir'))
+    call writefile([], Join(path, 'file'))
+    Assert True(vcs_info#all(path, ['dir', 'file']))
+  End
+
+  It returns false
+    Assert True(vcs_info#all(path, ['dir', 'file']))
+  End
+End
+
+Describe #any()
+  Before all
+    let path = TempDir()
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  It returns true
+    call writefile([], Join(path, 'file'))
+    Assert True(vcs_info#any(path, ['dir', 'file']))
+  End
+
+  It returns false
+    Assert True(vcs_info#any(path, ['dir', 'file']))
+  End
+End

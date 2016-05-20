@@ -11,6 +11,7 @@ Describe Mercurial backend
   Before each
     let hash = SHA1()
     call mkdir(hg_dir, 'p')
+    call mkdir(Join(hg_dir, 'store'))
     edit `=Join(path, 'a.txt')`
   End
 

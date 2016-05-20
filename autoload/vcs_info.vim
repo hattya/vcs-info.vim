@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-17
+" Last Change: 2016-05-20
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -45,6 +45,14 @@ endfunction
 function! vcs_info#abbr(hash) abort
   let n = s:getvar('vcs_info_abbr', 7)
   return 0 < n ? a:hash[: n-1] : ''
+endfunction
+
+function! vcs_info#all(path, args) abort
+  return len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""')) == len(a:args)
+endfunction
+
+function! vcs_info#any(path, args) abort
+  return 0 < len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""'))
 endfunction
 
 function! vcs_info#from_slash(path) abort
