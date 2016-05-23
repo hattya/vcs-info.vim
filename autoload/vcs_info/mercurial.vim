@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/mercurial.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-20
+" Last Change: 2016-05-23
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -10,10 +10,8 @@ let s:FP = vital#vcs_info#import('System.Filepath')
 
 function! vcs_info#mercurial#detect(path) abort
   let hg_dir = s:FP.join(a:path, '.hg')
-  if isdirectory(hg_dir)
-    if vcs_info#any(hg_dir, ['store', 'data'])
-      return hg_dir
-    endif
+  if vcs_info#any(hg_dir, ['store', 'data'])
+    return hg_dir
   endif
   return ''
 endfunction

@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-20
+" Last Change: 2016-05-23
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -49,11 +49,11 @@ function! vcs_info#abbr(hash) abort
 endfunction
 
 function! vcs_info#all(path, args) abort
-  return len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""')) == len(a:args)
+  return isdirectory(a:path) && len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""')) == len(a:args)
 endfunction
 
 function! vcs_info#any(path, args) abort
-  return 0 < len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""'))
+  return isdirectory(a:path) && 0 < len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""'))
 endfunction
 
 function! vcs_info#from_slash(path) abort
@@ -69,7 +69,7 @@ function! vcs_info#reload() abort
   for f in s:V.globpath(&runtimepath, s:FP.join('autoload', 'vcs_info', '*.vim'))
     call add(s:vcses, fnamemodify(f, ':t:r'))
   endfor
-  call s:L.uniq(sort(s:vcses))
+  call s:L.uniq(s:vcses)
 endfunction
 
 function! vcs_info#to_slash(path) abort
