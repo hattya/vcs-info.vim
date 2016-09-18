@@ -11,6 +11,9 @@ vcs_info_.
 .. image:: https://ci.appveyor.com/api/projects/status/4yda92saqm3sj6nd?svg=true
    :target: https://ci.appveyor.com/project/hattya/vcs-info-vim
 
+.. image:: https://img.shields.io/badge/powered_by-vital.vim-80273f.svg
+   :target: https://github.com/vim-jp/vital.vim
+
 .. image:: https://img.shields.io/badge/doc-:h%20vcs--info-blue.svg
    :target: doc/vcs-info.txt
 
