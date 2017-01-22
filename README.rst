@@ -5,10 +5,10 @@ vcs-info.vim is a Vim plugin to retrieve VCS information of the working
 directory where the currently edited file exists. It is inspired by Zsh_'s
 vcs_info_.
 
-.. image:: https://drone.io/github.com/hattya/vcs-info.vim/status.png
-   :target: https://drone.io/github.com/hattya/vcs-info.vim/latest
+.. image:: https://semaphoreci.com/api/v1/hattya/vcs-info-vim/branches/master/badge.svg
+   :target: https://semaphoreci.com/hattya/vcs-info-vim
 
-.. image:: https://ci.appveyor.com/api/projects/status/4yda92saqm3sj6nd?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/4yda92saqm3sj6nd/branch/master?svg=true
    :target: https://ci.appveyor.com/project/hattya/vcs-info-vim
 
 .. image:: https://img.shields.io/badge/powered_by-vital.vim-80273f.svg
