@@ -1,3 +1,5 @@
 *.html
 *.sw?
+.coverage.*
+profile.txt
 tags

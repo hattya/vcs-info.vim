@@ -30,3 +30,9 @@ function! TempDir() abort
   call mkdir(path, 'p')
   return path
 endfunction
+
+if $PROFILE !=# ''
+  execute 'profile start' $PROFILE
+  execute 'profile! file' s:FP.join('.', 'autoload', 'vcs_info*')
+  execute 'profile! file' s:FP.join('.', 'plugin', '*')
+endif
