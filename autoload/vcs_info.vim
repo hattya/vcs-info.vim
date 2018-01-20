@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-23
+" Last Change: 2018-01-20
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -96,8 +96,6 @@ endfunction
 function! s:getvar(name, ...) abort
   return get(b:, a:name, get(g:, a:name, 0 < a:0 ? a:1 : 0))
 endfunction
-
-call vcs_info#reload()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
