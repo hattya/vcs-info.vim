@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/subversion.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-23
+" Last Change: 2019-03-24
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -11,14 +11,14 @@ let s:FP = vital#vcs_info#import('System.Filepath')
 function! vcs_info#subversion#detect(path) abort
   let svn_dir = s:FP.join(a:path, '.svn')
   if vcs_info#any(svn_dir, ['wc.db', 'entries', 'format'])
-    let info = s:svn_info(a:path)
+    let info = s:info(a:path)
     if has_key(info, 'Working Copy Root Path')
       if a:path ==# info['Working Copy Root Path']
         return svn_dir
       endif
     else
       let par = s:FP.dirname(a:path)
-      if par ==# a:path || !isdirectory(s:FP.join(par, '.svn')) || get(s:svn_info(par), 'Repository UUID') !=# info['Repository UUID']
+      if par ==# a:path || !isdirectory(s:FP.join(par, '.svn')) || get(s:info(par), 'Repository UUID') !=# info['Repository UUID']
         return svn_dir
       endif
     endif
@@ -27,17 +27,18 @@ function! vcs_info#subversion#detect(path) abort
 endfunction
 
 function! vcs_info#subversion#get(svn_dir) abort
-  let info = s:svn_info(s:FP.dirname(a:svn_dir))
+  let root = s:FP.dirname(a:svn_dir)
+  let info = s:info(root)
   return {
   \  'vcs':    'Subversion',
-  \  'root':   s:FP.dirname(a:svn_dir),
+  \  'root':   root,
   \  'dir':    a:svn_dir,
   \  'head':   substitute(info['URL'], '^.*/', '', '') . '@' . info['Revision'],
   \  'action': '',
   \}
 endfunction
 
-function! s:svn_info(path) abort
+function! s:info(path) abort
   let info = {}
   for l in vcs_info#system(['svn', 'info', '--non-interactive', a:path])
     let i = stridx(l, ':')

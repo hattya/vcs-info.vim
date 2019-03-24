@@ -8,14 +8,14 @@ Describe #get()
   End
 
   Before each
-    edit `=Join(path, 'a.txt')`
+    edit `=Join(path, 'file')`
   End
 
   After each
     bwipe!
   End
 
-  It returns empty dict
+  It returns an empty dict
     Assert Equals(vcs_info#get(), {})
   End
 End
@@ -26,13 +26,13 @@ Describe #abbr()
     unlet! b:vcs_info_abbr
   End
 
-  It abbreviates string to default length
+  It abbreviates a string to the default length
     let abbr = vcs_info#abbr(hash)
     Assert LengthOf(abbr, 7)
     Assert Equals(abbr, hash[: 6])
   End
 
-  It abbreviates string to length specified
+  It abbreviates a string to the specified length
     let b:vcs_info_abbr = 3
     let abbr = vcs_info#abbr(hash)
     Assert LengthOf(abbr, 3)
@@ -44,7 +44,7 @@ Describe #abbr()
     Assert Equals(abbr, hash[: 12])
   End
 
-  It returns empty string
+  It returns an empty string
     let b:vcs_info_abbr = 0
     let abbr = vcs_info#abbr(hash)
     Assert IsString(abbr)
@@ -56,7 +56,7 @@ Describe #abbr()
     Assert Empty(abbr)
   End
 
-  It returns string as-is
+  It returns a string as-is
     let b:vcs_info_abbr = len(hash)
     let abbr = vcs_info#abbr(hash)
     Assert LengthOf(abbr, len(hash))
@@ -113,7 +113,7 @@ Describe #system
     let V = vital#vcs_info#import('Prelude')
   End
 
-  It executes in POSIX locale
+  It executes in the POSIX locale
     if V.is_windows()
       let args = ['cmd', '/c', 'set', '|', 'findstr', '/b', 'L[AC]']
     else

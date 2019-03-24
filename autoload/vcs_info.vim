@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2018-01-20
+" Last Change: 2019-03-24
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -15,10 +15,7 @@ let s:vcses = []
 
 function! vcs_info#detect(path) abort
   unlet! b:vcs_info
-  let path = a:path
-  if path !=# '' && !isdirectory(path)
-    let path = s:FP.dirname(path)
-  endif
+  let path = a:path !=# '' && !isdirectory(a:path) ? s:FP.dirname(a:path) : a:path
   let prev = ''
   while path !=# prev
     for vcs in s:vcses
@@ -37,15 +34,12 @@ function! vcs_info#detect(path) abort
 endfunction
 
 function! vcs_info#get() abort
-  if !exists('b:vcs_info')
-    return {}
-  endif
-  return vcs_info#{b:vcs_info.vcs}#get(b:vcs_info.dir)
+  return exists('b:vcs_info') ? vcs_info#{b:vcs_info.vcs}#get(b:vcs_info.dir) : {}
 endfunction
 
 function! vcs_info#abbr(hash) abort
   let n = s:getvar('vcs_info_abbr', 7)
-  return 0 < n ? a:hash[: n-1] : ''
+  return n > 0 ? a:hash[: n-1] : ''
 endfunction
 
 function! vcs_info#all(path, args) abort
@@ -53,11 +47,11 @@ function! vcs_info#all(path, args) abort
 endfunction
 
 function! vcs_info#any(path, args) abort
-  return isdirectory(a:path) && 0 < len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""'))
+  return isdirectory(a:path) && len(filter(copy(a:args), 'getftype(s:FP.join(a:path, v:val)) !=# ""')) > 0
 endfunction
 
 function! vcs_info#from_slash(path) abort
-  return s:V.is_windows() ? substitute(a:path, '/', '\', 'g') : a:path
+  return s:V.is_windows() ? tr(a:path, '/', '\') : a:path
 endfunction
 
 function! vcs_info#readfile(name) abort
@@ -73,7 +67,7 @@ function! vcs_info#reload() abort
 endfunction
 
 function! vcs_info#to_slash(path) abort
-  return s:V.is_windows() ? substitute(a:path, '\\', '/', 'g') : a:path
+  return s:V.is_windows() ? tr(a:path, '\', '/') : a:path
 endfunction
 
 function! vcs_info#system(args, ...) abort
@@ -94,7 +88,7 @@ function! vcs_info#system(args, ...) abort
 endfunction
 
 function! s:getvar(name, ...) abort
-  return get(b:, a:name, get(g:, a:name, 0 < a:0 ? a:1 : 0))
+  return get(b:, a:name, get(g:, a:name, a:0 > 0 ? a:1 : 0))
 endfunction
 
 let &cpo = s:save_cpo

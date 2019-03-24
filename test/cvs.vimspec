@@ -11,7 +11,7 @@ Describe CVS backend
   Before each
     call mkdir(cvs_dir, 'p')
     call writefile([], Join(cvs_dir, 'Repository'))
-    edit `=Join(path, 'a.txt')`
+    edit `=Join(path, 'file')`
   End
 
   After each
@@ -19,27 +19,25 @@ Describe CVS backend
     call RemoveAll(cvs_dir)
   End
 
-  It detects repository
+  It detects a repository
     call writefile(['project'], Join(cvs_dir, 'Repository'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'CVS',
-    \               'root':   path,
-    \               'dir':    cvs_dir,
-    \               'head':   'project',
-    \               'action': '',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'CVS',
+    \        'root':   path,
+    \        'dir':    cvs_dir,
+    \        'head':   'project',
+    \        'action': '',
+    \      })
   End
 
-  It detects that it is checked out subset of module
+  It detects that it is checked out a subset of a module
     call writefile(['project/dir'], Join(cvs_dir, 'Repository'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'CVS',
-    \               'root':   path,
-    \               'dir':    cvs_dir,
-    \               'head':   'project/dir',
-    \               'action': '',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'CVS',
+    \        'root':   path,
+    \        'dir':    cvs_dir,
+    \        'head':   'project/dir',
+    \        'action': '',
+    \      })
   End
 End

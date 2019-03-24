@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2016-05-20
+" Last Change: 2019-03-24
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -13,7 +13,7 @@ function! vcs_info#git#detect(path) abort
   let git_dir = s:FP.join(a:path, '.git')
   let ft = getftype(git_dir)
   if ft ==# 'dir'
-    if vcs_info#all(git_dir, ['objects', 'refs']) && 10 < getfsize(s:FP.join(git_dir, 'HEAD'))
+    if vcs_info#all(git_dir, ['objects', 'refs']) && getfsize(s:FP.join(git_dir, 'HEAD')) > 10
       return git_dir
     endif
   elseif ft ==# 'file'

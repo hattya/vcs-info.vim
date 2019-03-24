@@ -12,7 +12,7 @@ Describe Mercurial backend
     let hash = SHA1()
     call mkdir(hg_dir, 'p')
     call mkdir(Join(hg_dir, 'store'))
-    edit `=Join(path, 'a.txt')`
+    edit `=Join(path, 'file')`
   End
 
   After each
@@ -20,72 +20,66 @@ Describe Mercurial backend
     call RemoveAll(hg_dir)
   End
 
-  It detects repository
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'default',
-    \               'action': '',
-    \             })
+  It detects a repository
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'default',
+    \        'action': '',
+    \      })
   End
 
-  It detects that it is activated bookmark
+  It detects that it is activated a bookmark
     call writefile(['@'], Join(hg_dir, 'bookmarks.current'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'default',
-    \               'action': '',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'default',
+    \        'action': '',
+    \      })
 
     call writefile(['master'], Join(hg_dir, 'bookmarks.current'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'master',
-    \               'action': '',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'master',
+    \        'action': '',
+    \      })
   End
 
-  It detects that it is checked out stable branch
+  It detects that it is checked out the stable branch
     call writefile(['stable'], Join(hg_dir, 'branch'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'stable',
-    \               'action': '',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'stable',
+    \        'action': '',
+    \      })
   End
 
   It detects that it is doing 'merge'
     call mkdir(Join(hg_dir, 'merge'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'default',
-    \               'action': 'merge',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'default',
+    \        'action': 'merge',
+    \      })
   End
 
   It detects that it is doing 'rebase'
     call writefile([], Join(hg_dir, 'rebasestate'))
-    Assert Equals(vcs_info#get(),
-    \             {
-    \               'vcs':    'Mercurial',
-    \               'root':   path,
-    \               'dir':    hg_dir,
-    \               'head':   'default',
-    \               'action': 'rebase',
-    \             })
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Mercurial',
+    \        'root':   path,
+    \        'dir':    hg_dir,
+    \        'head':   'default',
+    \        'action': 'rebase',
+    \      })
   End
 End
