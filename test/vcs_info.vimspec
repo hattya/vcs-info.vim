@@ -114,12 +114,14 @@ Describe #system
   End
 
   It executes in the POSIX locale
-    if V.is_windows()
-      let args = ['cmd', '/c', 'set', '|', 'findstr', '/b', 'L[AC]']
+    if &shell =~? 'sh$'
+      let args = 'env | grep -a "^L[AC]"'
+    elseif V.is_windows()
+      let args = 'cmd /c set | findstr /b "L[AC]"'
     else
-      let args = ['env', '|', 'grep', '-a', '"^L[AC]"']
+      Fail '...'
     endif
     silent let out = vcs_info#system(args)
-    Assert HasKey(out, 'LC_ALL=C')
+    Assert NotEqual(index(out, 'LANGUAGE=C'), -1)
   End
 End

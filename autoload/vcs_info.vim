@@ -71,20 +71,33 @@ function! vcs_info#to_slash(path) abort
 endfunction
 
 function! vcs_info#system(args, ...) abort
-  let lc_all = $LC_ALL
+  let environ = {
+  \  'LANGUAGE': [$LANGUAGE, 'C'],
+  \}
+  let restore = 0
   try
     let args = a:args
     if &shell =~? 'sh$'
-      let args = ['env', 'LC_ALL=C'] + args
+      let env = ['env']
+      for [k, v] in items(environ)
+        call add(env, k . '=' . v[1])
+      endfor
+      let args = s:V.is_list(args) ? extend(env, args) : join(add(env, args), ' ')
     elseif s:V.is_windows()
-      let $LC_ALL = 'C'
+      for [k, v] in items(environ)
+        execute printf("let $%s = '%s'", k, v[1])
+      endfor
+      let restore = 1
     endif
-    silent return split(call(s:P.system, [args] + a:000), '\n')
+    silent let out = call(s:P.system, [args] + a:000)
   finally
-    if s:V.is_windows()
-      let $LC_ALL = lc_all
+    if restore
+      for [k, v] in items(environ)
+        execute printf("let $%s = '%s'", k, v[0])
+      endfor
     endif
   endtry
+  return s:P.get_last_status() ? [] : split(out, '\n')
 endfunction
 
 function! s:getvar(name, ...) abort
