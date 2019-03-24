@@ -73,10 +73,10 @@ function! vcs_info#git#get(git_dir) abort
 endfunction
 
 function! s:find_ref(git_dir, hash) abort
-  let pat = vcs_info#from_slash('\v/refs/%(heads|tags)/')
+  let pat = '\v' . escape(vcs_info#from_slash('/refs/%(heads|tags)/'), '\')
   for ref in s:V.glob(s:FP.join(a:git_dir, 'refs', '*', '*'))
     if ref =~# pat && vcs_info#readfile(ref) ==# a:hash
-      return ref[len(a:git_dir)+1 :]
+      return vcs_info#to_slash(ref[len(a:git_dir)+1 :])
     endif
   endfor
   if filereadable(s:FP.join(a:git_dir, 'packed-refs'))

@@ -73,6 +73,7 @@ Describe Git barckend
     \        'action': '',
     \      })
 
+    call delete(Join(git_dir, 'packed-refs'))
     call mkdir(Join(git_dir, 'refs', 'heads'))
     call writefile([hash], Join(git_dir, 'refs', 'heads', 'next'))
     call writefile([hash], Join(git_dir, 'HEAD'))
@@ -115,6 +116,7 @@ Describe Git barckend
     \        'action': '',
     \      })
 
+    call delete(Join(git_dir, 'packed-refs'))
     call mkdir(Join(git_dir, 'refs', 'tags'))
     call writefile([hash], Join(git_dir, 'refs', 'tags', 'v1.0'))
     call writefile([hash], Join(git_dir, 'HEAD'))
