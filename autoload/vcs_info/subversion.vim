@@ -12,11 +12,9 @@ function! vcs_info#subversion#detect(path) abort
   let svn_dir = s:FP.join(a:path, '.svn')
   if vcs_info#any(svn_dir, ['wc.db', 'entries', 'format'])
     let info = s:info(a:path)
-    if has_key(info, 'Working Copy Root Path')
-      if a:path ==# info['Working Copy Root Path']
-        return svn_dir
-      endif
-    else
+    if a:path ==# get(info, 'Working Copy Root Path')
+      return svn_dir
+    elseif !empty(info)
       let par = s:FP.dirname(a:path)
       if par ==# a:path || !isdirectory(s:FP.join(par, '.svn')) || get(s:info(par), 'Repository UUID') !=# info['Repository UUID']
         return svn_dir

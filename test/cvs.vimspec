@@ -11,6 +11,7 @@ Describe CVS backend
   Before each
     call mkdir(cvs_dir, 'p')
     call writefile([], Join(cvs_dir, 'Repository'))
+    call writefile([], Join(cvs_dir, 'Root'))
     edit `=Join(path, 'file')`
   End
 
