@@ -21,6 +21,7 @@ directory where the currently edited file exists. It is inspired by Zsh's
 vcs_info.
 
 Supported VCS:~
+	Bazaar
 	CVS
 	Git
 	Mercurial

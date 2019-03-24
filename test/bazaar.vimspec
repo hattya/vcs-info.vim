@@ -1,0 +1,54 @@
+Describe Bazaar backend
+  Before all
+    let path = TempDir()
+    let bzr_dir = Join(path, '.bzr')
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    call mkdir(bzr_dir, 'p')
+    call mkdir(Join(bzr_dir, 'branch'))
+    edit `=Join(path, 'file')`
+  End
+
+  After each
+    bwipe!
+    call RemoveAll(bzr_dir)
+  End
+
+  It detects a repository
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Bazaar',
+    \        'root':   path,
+    \        'dir':    bzr_dir,
+    \        'head':   fnamemodify(path, ':t'),
+    \        'action': '',
+    \      })
+  End
+
+  It detects that it is set the branch nickname
+    call writefile(['nickname = trunk'], Join(bzr_dir, 'branch', 'branch.conf'))
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Bazaar',
+    \        'root':   path,
+    \        'dir':    bzr_dir,
+    \        'head':   'trunk',
+    \        'action': '',
+    \      })
+  End
+
+  It detects that it is doing 'merge'
+    call mkdir(Join(bzr_dir, 'checkout'))
+    call writefile(['', ''], Join(bzr_dir, 'checkout', 'conflicts'))
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    'Bazaar',
+    \        'root':   path,
+    \        'dir':    bzr_dir,
+    \        'head':   fnamemodify(path, ':t'),
+    \        'action': 'merge',
+    \      })
+  End
+End
