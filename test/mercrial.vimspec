@@ -1,5 +1,6 @@
 Describe Mercurial backend
   Before all
+    let vcs = 'Mercurial'
     let path = TempDir()
     let hg_dir = Join(path, '.hg')
   End
@@ -22,7 +23,7 @@ Describe Mercurial backend
 
   It detects a repository
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'default',
@@ -33,7 +34,7 @@ Describe Mercurial backend
   It detects that it is activated a bookmark
     call writefile(['@'], Join(hg_dir, 'bookmarks.current'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'default',
@@ -42,7 +43,7 @@ Describe Mercurial backend
 
     call writefile(['master'], Join(hg_dir, 'bookmarks.current'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'master',
@@ -53,7 +54,7 @@ Describe Mercurial backend
   It detects that it is checked out the stable branch
     call writefile(['stable'], Join(hg_dir, 'branch'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'stable',
@@ -64,7 +65,7 @@ Describe Mercurial backend
   It detects that it is doing 'merge'
     call mkdir(Join(hg_dir, 'merge'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'default',
@@ -75,7 +76,7 @@ Describe Mercurial backend
   It detects that it is doing 'rebase'
     call writefile([], Join(hg_dir, 'rebasestate'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Mercurial',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    hg_dir,
     \        'head':   'default',

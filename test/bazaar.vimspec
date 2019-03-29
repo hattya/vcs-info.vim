@@ -1,5 +1,6 @@
 Describe Bazaar backend
   Before all
+    let vcs = 'Bazaar'
     let path = TempDir()
     let bzr_dir = Join(path, '.bzr')
   End
@@ -21,7 +22,7 @@ Describe Bazaar backend
 
   It detects a repository
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Bazaar',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    bzr_dir,
     \        'head':   fnamemodify(path, ':t'),
@@ -32,7 +33,7 @@ Describe Bazaar backend
   It detects that it is set the branch nickname
     call writefile(['nickname = trunk'], Join(bzr_dir, 'branch', 'branch.conf'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Bazaar',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    bzr_dir,
     \        'head':   'trunk',
@@ -44,7 +45,7 @@ Describe Bazaar backend
     call mkdir(Join(bzr_dir, 'checkout'))
     call writefile(['', ''], Join(bzr_dir, 'checkout', 'conflicts'))
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Bazaar',
+    \        'vcs':    vcs,
     \        'root':   path,
     \        'dir':    bzr_dir,
     \        'head':   fnamemodify(path, ':t'),

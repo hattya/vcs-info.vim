@@ -2,6 +2,8 @@ Describe Subversion backend
   Before all
     let V = vital#vcs_info#import('Prelude')
 
+    let vcs = 'Subversion'
+    let cwd = getcwd()
     let path = TempDir()
     let repo = Join(path, 'repo')
     let wc = Join(path, 'wc')
@@ -18,7 +20,11 @@ Describe Subversion backend
     elseif !executable('svn')
       Skip requires svn in $PATH
     endif
-    let cwd = getcwd()
+
+    call vcs_info#system(['svnadmin', 'create', repo])
+    call vcs_info#system(['svn', 'checkout', 'file:///' . vcs_info#to_slash(repo), wc])
+    cd `=wc`
+    edit `=Join(wc, 'file')`
   End
 
   After each
@@ -30,18 +36,19 @@ Describe Subversion backend
   End
 
   It detects a repository
-    silent call vcs_info#system(['svnadmin', 'create', repo])
-    silent call vcs_info#system(['svn', 'checkout', 'file:///' . vcs_info#to_slash(repo), wc])
-    cd `=wc`
-    silent call vcs_info#system(['svn', 'mkdir', 'trunk'])
-    silent call vcs_info#system(['svn', 'commit', '-m', '_'])
-    cd `=cwd`
-    call RemoveAll(wc)
-    silent call vcs_info#system(['svn', 'checkout', 'file:///' . vcs_info#to_slash(repo) . '/trunk', wc])
-
-    edit `=Join(wc, 'file')`
     Assert Equals(vcs_info#get(), {
-    \        'vcs':    'Subversion',
+    \        'vcs':    vcs,
+    \        'root':   wc,
+    \        'dir':    svn_dir,
+    \        'head':   'repo@0',
+    \        'action': '',
+    \      })
+
+    call vcs_info#system(['svn', 'mkdir', 'trunk'])
+    call vcs_info#system(['svn', 'commit', '-m', '_'])
+    call vcs_info#system(['svn', 'switch', '--ignore-ancestry', '^/trunk'])
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    vcs,
     \        'root':   wc,
     \        'dir':    svn_dir,
     \        'head':   'trunk@1',
