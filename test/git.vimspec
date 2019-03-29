@@ -62,6 +62,7 @@ Describe Git barckend
     let packed_refs = [
     \  '# pack-refs with: peeled fully-peeled ',
     \  hash . ' refs/heads/next',
+    \  hash . ' refs/remotes/origin/next',
     \]
     call writefile(packed_refs, Join(git_dir, 'packed-refs'))
     call writefile([hash], Join(git_dir, 'HEAD'))
@@ -89,6 +90,7 @@ Describe Git barckend
   It detects that it is checked out the v1.0 tag
     let packed_refs = [
     \  '# pack-refs with: peeled fully-peeled ',
+    \  hash . ' refs/remotes/origin/master',
     \  hash . ' refs/tags/v1.0',
     \]
     call writefile(packed_refs, Join(git_dir, 'packed-refs'))
@@ -103,6 +105,7 @@ Describe Git barckend
 
     let packed_refs = [
     \  '# pack-refs with: peeled fully-peeled ',
+    \  hash   . ' refs/remotes/origin/master',
     \  SHA1() . ' refs/tags/v1.0',
     \  '^' . hash,
     \]

@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2019-03-24
+" Last Change: 2019-03-29
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -73,10 +73,10 @@ function! vcs_info#git#get(git_dir) abort
 endfunction
 
 function! s:find_ref(git_dir, hash) abort
-  let pat = '\v' . escape(vcs_info#from_slash('/refs/%(heads|tags)/'), '\')
-  for ref in s:V.glob(s:FP.join(a:git_dir, 'refs', '*', '*'))
-    if ref =~# pat && vcs_info#readfile(ref) ==# a:hash
-      return vcs_info#to_slash(ref[len(a:git_dir)+1 :])
+  let refs = []
+  for ref in s:V.glob(s:FP.join(a:git_dir, 'refs', '**'))
+    if vcs_info#readfile(ref) ==# a:hash
+      call add(refs, vcs_info#to_slash(ref[len(a:git_dir)+1 :]))
     endif
   endfor
   if filereadable(s:FP.join(a:git_dir, 'packed-refs'))
@@ -84,13 +84,13 @@ function! s:find_ref(git_dir, hash) abort
     for l in readfile(s:FP.join(a:git_dir, 'packed-refs'))[1 :]
       if l[0] ==# '^'
         if l[1 :] ==# a:hash
-          return tag
+          call add(refs, tag)
         endif
       else
         let ref = l[41 :]
         if l[: 39] ==# a:hash
-          if ref =~# '\v^refs/%(heads|tags)/'
-            return ref
+          if ref =~# '^refs/.\{-}/'
+            call add(refs, ref)
           endif
         elseif ref =~# '^refs/tags/'
           let tag = ref
@@ -98,7 +98,16 @@ function! s:find_ref(git_dir, hash) abort
       endif
     endfor
   endif
-  return ''
+  return !empty(refs) ? sort(refs, 's:compare_refs')[0] : ''
+endfunction
+
+function! s:compare_refs(a, b) abort
+  if a:a =~# '^refs/tags/' && a:b !~# '^refs/tags/'
+    return -1
+  elseif a:a !~# '^refs/tags/' && a:b =~# '^refs/tags/'
+    return 1
+  endif
+  return a:a <# a:b ? -1 : a:a ==# a:b ? 0 : 1
 endfunction
 
 function! s:symbolic_ref(path) abort
