@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2019-03-24
+" Last Change: 2019-03-31
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -97,7 +97,7 @@ function! vcs_info#system(args, ...) abort
       endfor
     endif
   endtry
-  return s:P.get_last_status() ? [] : split(out, '\n')
+  return !s:P.get_last_status() ? split(out, '\n') : []
 endfunction
 
 function! s:getvar(name, ...) abort

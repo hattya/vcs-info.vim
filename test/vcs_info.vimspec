@@ -108,7 +108,7 @@ Describe #any()
   End
 End
 
-Describe #system
+Describe #system()
   Before all
     let V = vital#vcs_info#import('Prelude')
   End
