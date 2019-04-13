@@ -40,22 +40,22 @@ Vundle_
 
    Plugin 'hattya/vcs-info.vim'
 
-NeoBundle_
-
-.. code:: vim
-
-   NeoBundle 'hattya/vcs-info.vim'
-
 vim-plug_
 
 .. code:: vim
 
    Plug 'hattya/vcs-info.vim'
 
+dein.vim_
+
+.. code:: vim
+
+   call dein#add('hattya/vcs-info.vim')
+
 .. _pathogen.vim: https://github.com/tpope/vim-pathogen
 .. _Vundle: https://github.com/VundleVim/Vundle.vim
-.. _NeoBundle: https://github.com/Shougo/neobundle.vim
 .. _vim-plug: https://github.com/junegunn/vim-plug
+.. _dein.vim: https://github.com/Shougo/dein.vim
 
 
 Usage
