@@ -31,9 +31,13 @@ function! vcs_info#subversion#get(svn_dir) abort
   \  'vcs':    'Subversion',
   \  'root':   root,
   \  'dir':    a:svn_dir,
-  \  'head':   substitute(info['URL'], '^.*/', '', '') . '@' . info['Revision'],
+  \  'head':   s:decode(substitute(info['URL'], '^.*/', '', '')) . '@' . info['Revision'],
   \  'action': '',
   \}
+endfunction
+
+function! s:decode(uri) abort
+  return iconv(substitute(a:uri, '%\(\x\x\)', '\=printf("%c", str2nr(submatch(1), 16))', 'g'), 'utf-8', &encoding)
 endfunction
 
 function! s:info(path) abort
