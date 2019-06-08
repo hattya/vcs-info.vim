@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2019-03-31
+" Last Change: 2019-06-08
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -68,6 +68,10 @@ endfunction
 
 function! vcs_info#to_slash(path) abort
   return s:V.is_windows() ? tr(a:path, '\', '/') : a:path
+endfunction
+
+function! vcs_info#trim(s) abort
+  return matchstr(a:s, '^\s*\zs.\{-}\ze\s*$')
 endfunction
 
 function! vcs_info#system(args, ...) abort

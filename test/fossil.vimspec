@@ -1,0 +1,76 @@
+Describe Fossil backend
+  Before all
+    let V = vital#vcs_info#import('Prelude')
+
+    let vcs = 'Fossil'
+    let cwd = getcwd()
+    let path = TempDir()
+    let repo = Join(path, 'repo.fossil')
+    let co = Join(path, 'repo')
+
+    let $FOSSIL_HOME = path
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    if !executable('fossil')
+      Skip requires fossil in $PATH
+    endif
+
+    call vcs_info#system(['fossil', 'init', repo])
+    call mkdir(co, 'p')
+    cd `=co`
+    call vcs_info#system(['fossil', 'open', repo])
+    edit `=Join(co, 'file')`
+  End
+
+  After each
+    bwipe!
+    cd `=cwd`
+    for p in V.glob(Join(path, '*'))
+      call RemoveAll(p)
+    endfor
+  End
+
+  It detects a repository
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    vcs,
+    \        'root':   co,
+    \        'dir':    co,
+    \        'head':   'trunk',
+    \        'action': '',
+    \      })
+  End
+
+  It detects that it is doing 'merge'
+    let path = expand('%:p')
+    call writefile(['1'], path)
+    call vcs_info#system(['fossil', 'add', '.'])
+    call vcs_info#system(['fossil', 'commit', '-m', '.'])
+    sleep 1
+    call writefile(['2'], path)
+    call vcs_info#system(['fossil', 'commit', '--branch', 'branch', '-m', '.'])
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    vcs,
+    \        'root':   co,
+    \        'dir':    co,
+    \        'head':   'branch',
+    \        'action': '',
+    \      })
+
+    call vcs_info#system(['fossil', 'update', 'trunk'])
+    call writefile(['3'], path)
+    call vcs_info#system(['fossil', 'commit', '-m', '.'])
+    call vcs_info#system(['fossil', 'merge', '--integrate', 'branch'])
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    vcs,
+    \        'root':   co,
+    \        'dir':    co,
+    \        'head':   'trunk',
+    \        'action': 'merge',
+    \      })
+  End
+End

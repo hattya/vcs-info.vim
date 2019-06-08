@@ -2,7 +2,7 @@
 
 Author:      Akinori Hattori <hattya@gmail.com>
 Repository:  https://github.com/hattya/vcs-info.vim
-Last Change: 2019-03-24
+Last Change: 2019-06-08
 License:     MIT License
 
 CONTENTS					*vcs-info-contents*
@@ -23,6 +23,7 @@ vcs_info.
 Supported VCS:~
 	Bazaar
 	CVS
+	Fossil
 	Git
 	Mercurial
 	Subversion

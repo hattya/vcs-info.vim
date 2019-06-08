@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/subversion.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2019-03-24
+" Last Change: 2019-06-08
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -41,14 +41,10 @@ function! s:info(path) abort
   for l in vcs_info#system(['svn', 'info', '--non-interactive', a:path])
     let i = stridx(l, ':')
     if i != -1
-      let info[s:trim(l[: i-1])] = s:trim(l[i+1 :])
+      let info[l[: i-1]] = vcs_info#trim(l[i+1 :])
     endif
   endfor
   return info
-endfunction
-
-function! s:trim(s) abort
-  return matchstr(a:s, '\v^\s*\zs.{-}\ze\s*$')
 endfunction
 
 let &cpo = s:save_cpo
