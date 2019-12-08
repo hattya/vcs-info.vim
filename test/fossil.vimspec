@@ -9,6 +9,7 @@ Describe Fossil backend
     let co = Join(path, 'repo')
 
     let $FOSSIL_HOME = path
+    let $FOSSIL_USER = 'vcs-info.vim'
   End
 
   After all
