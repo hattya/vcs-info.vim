@@ -4,7 +4,7 @@
 function! s:_SID() abort
   return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze__SID$')
 endfunction
-execute join(['function! vital#_vcs_info#System#Filepath#import() abort', printf("return map({'path_separator': '', 'is_case_tolerant': '', 'dirname': '', 'abspath': '', 'relpath': '', 'realpath': '', 'unify_separator': '', 'to_slash': '', 'is_root_directory': '', 'split': '', 'path_extensions': '', 'unixpath': '', 'which': '', 'winpath': '', 'from_slash': '', 'join': '', 'expand_home': '', 'separator': '', 'is_relative': '', 'basename': '', 'remove_last_separator': '', 'is_absolute': '', 'contains': ''}, \"vital#_vcs_info#function('<SNR>%s_' . v:key)\")", s:_SID()), 'endfunction'], "\n")
+execute join(['function! vital#_vcs_info#System#Filepath#import() abort', printf("return map({'path_separator': '', 'is_case_tolerant': '', 'dirname': '', 'abspath': '', 'relpath': '', 'realpath': '', 'unify_separator': '', 'to_slash': '', 'is_root_directory': '', 'split': '', 'path_extensions': '', 'unixpath': '', 'which': '', 'winpath': '', 'from_slash': '', 'join': '', 'separator': '', 'is_relative': '', 'basename': '', 'remove_last_separator': '', 'is_absolute': '', 'contains': ''}, \"vital#_vcs_info#function('<SNR>%s_' . v:key)\")", s:_SID()), 'endfunction'], "\n")
 delfunction s:_SID
 " ___vital___
 " You should check the following related builtin functions.
