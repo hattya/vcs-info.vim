@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2019-03-29
+" Last Change: 2020-10-30
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -56,7 +56,7 @@ function! vcs_info#git#get(git_dir) abort
     let info.head = s:symbolic_ref(a:git_dir)
     if info.head ==# ''
       let head = vcs_info#readfile(s:FP.join(a:git_dir, 'HEAD'))
-      let info.head = s:find_ref(a:git_dir, head)
+      let info.head = s:find_ref(fnamemodify(a:git_dir, ':p:h'), head)
       if info.head ==# ''
         let info.head = vcs_info#abbr(head)
       endif
