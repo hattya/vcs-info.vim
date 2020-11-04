@@ -13,10 +13,14 @@ jobs:
           - v8.0.0002
         platform:
           - Linux
+          - macOS
           - Windows
         include:
           - platform: Linux
             os: ubuntu-latest
+            download: never
+          - platform: macOS
+            os: macos-latest
             download: never
           - platform: Windows
             os: windows-latest
@@ -25,6 +29,8 @@ jobs:
     name: Vim ${{ matrix.vim_version }} on ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
       PROFILE: profile.txt
     timeout-minutes: 10
     steps:
@@ -50,6 +56,9 @@ jobs:
       - name: Install Fossil on Linux
         if: matrix.platform == 'Linux'
         run: sudo apt install fossil
+      - name: Install Fossil on macOS
+        if: matrix.platform == 'macOS'
+        run: brew install fossil
       - name: Install Fossil on Windows
         if: matrix.platform == 'Windows'
         run: choco install -y fossil
@@ -57,7 +66,7 @@ jobs:
         env:
           THEMIS_VIM: ${{ steps.vim.outputs.executable }}
         run: ./vim-themis/bin/themis --reporter spec
-      - name: Run covimerage
+      - name: Generate XML coverage report
         run: |
           covimerage write_coverage ${{ env.PROFILE }}
           covimerage xml
