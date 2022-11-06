@@ -1,0 +1,32 @@
+Describe Darcs backend
+  Before all
+    let vcs = 'Darcs'
+    let path = TempDir()
+    let darcs_dir = Join(path, '_darcs')
+  End
+
+  After all
+    call RemoveAll(path)
+  End
+
+  Before each
+    call mkdir(darcs_dir, 'p')
+    call writefile([], Join(darcs_dir, 'format'))
+    edit `=Join(path, 'file')`
+  End
+
+  After each
+    bwipe!
+    call RemoveAll(darcs_dir)
+  End
+
+  It detects a repository
+    Assert Equals(vcs_info#get(), {
+    \        'vcs':    vcs,
+    \        'root':   path,
+    \        'dir':    darcs_dir,
+    \        'head':   fnamemodify(path, ':t'),
+    \        'action': '',
+    \      })
+  End
+End
