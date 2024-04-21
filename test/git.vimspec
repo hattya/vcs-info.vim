@@ -48,6 +48,22 @@ Describe Git barckend
     \      })
   End
 
+  It detects a repository (worktree)
+    call mkdir(Join(git_dir, 'worktrees', 'next'), 'p')
+    call writefile(['ref: refs/heads/next'],     Join(git_dir, 'worktrees', 'next', 'HEAD'))
+    call writefile([Join(path, 'next', '.git')], Join(git_dir, 'worktrees', 'next', 'gitdir'))
+    call mkdir(Join(path, 'next'))
+    call writefile(['gitdir: ' . Join(git_dir, 'worktrees', 'next')], Join(path, 'next', '.git'))
+    edit `=Join(path, 'next', 'file')`
+    Assert Equals(vcs_info#get() , {
+    \        'vcs':    vcs,
+    \        'root':   Join(path, 'next'),
+    \        'dir':    Join(git_dir, 'worktrees', 'next'),
+    \        'head':   'next',
+    \        'action': '',
+    \      })
+  End
+
   It detects that it is in the 'detached HEAD' state
     call writefile([hash], Join(git_dir, 'HEAD'))
     Assert Equals(vcs_info#get(), {

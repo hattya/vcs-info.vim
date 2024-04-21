@@ -1,6 +1,6 @@
 " File:        autoload/vcs_info/git.vim
 " Author:      Akinori Hattori <hattya@gmail.com>
-" Last Change: 2020-10-30
+" Last Change: 2024-04-21
 " License:     MIT License
 
 let s:save_cpo = &cpo
@@ -17,10 +17,11 @@ function! vcs_info#git#detect(path) abort
       return git_dir
     endif
   elseif ft ==# 'file'
-    let rel = vcs_info#readfile(git_dir)
-    let i = matchend(rel, '^gitdir:\s*')
+    let data = vcs_info#readfile(git_dir)
+    let i = matchend(data, '^gitdir:\s*')
     if i != -1
-      return simplify(s:FP.join(a:path, vcs_info#from_slash(rel[i :])))
+      let git_dir = vcs_info#from_slash(data[i :])
+      return s:FP.is_absolute(git_dir) ? git_dir : simplify(s:FP.join(a:path, git_dir))
     endif
   endif
   return ''
@@ -28,9 +29,14 @@ endfunction
 
 function! vcs_info#git#get(git_dir) abort
   let sep = escape(s:FP.separator(), '\')
+  if a:git_dir =~# sep . '\.git' . sep . 'worktrees' . sep
+    let root = s:FP.dirname(vcs_info#from_slash(vcs_info#readfile(s:FP.join(a:git_dir, 'gitdir'))))
+  else
+    let root = substitute(a:git_dir, '\v' . sep . '\.git%(' . sep . 'modules)=', '', '')
+  endif
   let info = {
   \  'vcs':    'Git',
-  \  'root':   substitute(a:git_dir, '\v' . sep . '\.git%(' . sep . 'modules)=', '', ''),
+  \  'root':   root,
   \  'dir':    a:git_dir,
   \  'head':   '',
   \  'action': '',
